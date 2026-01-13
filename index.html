@@ -479,7 +479,8 @@
         
         // Kane County Parcels from AGRC
         const kaneCountyParcels = L.esri.featureLayer({
-            url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/UtahParcels_Beaver/FeatureServer/13',
+            url: 'https://gis.utahcounty.gov/arcgis/rest/services/Parcels/MapServer/0',
+            where: "COUNTY = 'Kane'",
             style: {
                 color: '#888888',
                 weight: 1,
@@ -489,27 +490,27 @@
             pane: 'overlayPane',
             minZoom: 13
         }).bindPopup(function(layer) {
-            return `<b>Kane County Parcel</b><br>Parcel ID: ${layer.feature.properties.parcel_id || 'N/A'}`;
+            return `<b>Kane County Parcel</b><br>Parcel ID: ${layer.feature.properties.PARCEL_ID || layer.feature.properties.parcel_id || 'N/A'}`;
         });
         
         // Utah Roads from AGRC
         const utahRoads = L.esri.featureLayer({
-            url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/UtahRoadsLRS/FeatureServer/0',
+            url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Utah_Roads/FeatureServer/0',
+            where: "COUNTY_L = 'KANE' OR COUNTY_R = 'KANE'",
             style: {
                 color: '#666666',
                 weight: 2,
                 opacity: 0.6
             },
-            pane: 'overlayPane',
-            where: "COUNTY_L = 'KANE' OR COUNTY_R = 'KANE'"
+            pane: 'overlayPane'
         }).bindPopup(function(layer) {
             const props = layer.feature.properties;
-            return `<b>${props.FULLNAME || 'Unnamed Road'}</b><br>Type: ${props.CARTOCODE || 'N/A'}`;
+            return `<b>${props.FULLNAME || props.NAME || 'Unnamed Road'}</b><br>Type: ${props.CARTOCODE || props.CLASS || 'N/A'}`;
         });
         
         // Water Points of Diversion from Utah Division of Water Rights
         const waterDiversions = L.esri.featureLayer({
-            url: 'https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/UtahWaterRights/FeatureServer/0',
+            url: 'https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/WaterRights/FeatureServer/0',
             pointToLayer: function(feature, latlng) {
                 return L.circleMarker(latlng, {
                     radius: 5,
@@ -521,14 +522,13 @@
                 });
             },
             pane: 'overlayPane',
-            where: "1=1",
             minZoom: 12
         }).bindPopup(function(layer) {
             const props = layer.feature.properties;
             return `<b>Water Right</b><br>
-                    Number: ${props.WRNUM || 'N/A'}<br>
-                    Type: ${props.WRSOURCE || 'N/A'}<br>
-                    Status: ${props.WRSTATUS || 'N/A'}`;
+                    Number: ${props.WRNUM || props.WR_NUM || 'N/A'}<br>
+                    Type: ${props.WRSOURCE || props.SOURCE || 'N/A'}<br>
+                    Status: ${props.WRSTATUS || props.STATUS || 'N/A'}`;
         });
         
         // Add AGRC layers to overlays control (not added to map by default)
