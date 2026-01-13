@@ -53,11 +53,43 @@
             font-size: 13px;
         }
         
+        .legend-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+        
         .legend h4 {
-            margin: 0 0 10px 0;
+            margin: 0;
             font-size: 14px;
             font-weight: 600;
             color: #333;
+        }
+        
+        .legend-toggle {
+            font-size: 16px;
+            color: #666;
+            font-weight: bold;
+            transition: transform 0.3s;
+        }
+        
+        .legend-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        .legend-content {
+            max-height: 500px;
+            overflow-y: auto;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        
+        .legend-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
         }
         
         .legend-item {
@@ -338,7 +370,11 @@
     <div class="map-title">Deer Springs Ranch Property Map</div>
     <div id="map"></div>
     <div class="legend">
-        <h4>Map Layers</h4>
+        <div class="legend-header" onclick="toggleLegend()">
+            <h4>Map Layers</h4>
+            <span class="legend-toggle" id="legend-toggle">▼</span>
+        </div>
+        <div class="legend-content" id="legend-content">
         <div class="legend-item">
             <div class="legend-symbol" style="background-color: transparent; border: 2px solid #C83232;"></div>
             <span>Property Parcels</span>
@@ -375,12 +411,22 @@
             <div class="legend-symbol" style="background-color: rgba(139,195,74,0.3); border: 2px solid #8BC34A;"></div>
             <span>Grazing Allotments</span>
         </div>
-    </div>
+        </div> <!-- Close legend-content -->
+    </div> <!-- Close legend -->
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     
     <script>
+        // Toggle legend visibility
+        function toggleLegend() {
+            const content = document.getElementById('legend-content');
+            const toggle = document.getElementById('legend-toggle');
+            
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+        }
+        
         // Initialize the map
         const map = L.map('map', {
             center: [37.376983, -112.256541],
@@ -718,7 +764,7 @@
                         };
                         
                         L.control.layers(baseLayers, overlays, {
-                            collapsed: false,
+                            collapsed: true,  // Changed to true so it starts collapsed and can be toggled
                             position: 'topright'
                         }).addTo(map);
                     }
