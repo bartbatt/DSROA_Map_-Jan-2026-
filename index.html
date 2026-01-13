@@ -119,6 +119,54 @@
             padding-right: 10px;
         }
         
+        /* Permanent feature labels */
+        .feature-label {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #999;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            white-space: nowrap;
+        }
+        
+        .feature-label::before {
+            display: none; /* Hide the default tooltip arrow */
+        }
+        
+        /* Hover-only labels */
+        .feature-label-hover {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #666;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            white-space: nowrap;
+        }
+        
+        /* Parcel labels - smaller and more transparent */
+        .parcel-label {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 2px;
+            padding: 1px 4px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #C83232;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.8);
+            white-space: nowrap;
+            pointer-events: none; /* Allow clicking through labels */
+        }
+        
+        .parcel-label::before {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             .map-title {
                 font-size: 14px;
@@ -222,8 +270,8 @@
             // Get feature properties
             const props = feature.properties;
             
-            // Create a clean display name
-            const importantKeys = ['name', 'title', 'location', 'type', 'fullname', 'lot'];
+            // Create a clean display name - prioritize 'note' for culverts
+            const importantKeys = ['note', 'name', 'location', 'type', 'fullname', 'lot'];
             let title = '';
             
             for (const key of importantKeys) {
@@ -239,15 +287,22 @@
             
             html += '<table>';
             
-            // Show relevant properties
-            const skipKeys = ['qc_id', 'geometry', 'id', 'fid', 'globalid', 'GlobalID', 'OBJECTID'];
+            // Show relevant properties - skip coordinates and redundant fields
+            const skipKeys = ['qc_id', 'geometry', 'id', 'fid', 'globalid', 'GlobalID', 'OBJECTID', 
+                             'coordinates', 'latitude', 'longitude', 'title', 'note'];
             
             Object.keys(props).forEach(key => {
                 if (!skipKeys.includes(key) && props[key] !== null && props[key] !== '') {
                     const value = props[key];
                     // Format key name
                     const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    html += `<tr><td>${displayKey}:</td><td>${value}</td></tr>`;
+                    
+                    // Make URLs clickable
+                    if (key === 'url' && value.startsWith('http')) {
+                        html += `<tr><td>${displayKey}:</td><td><a href="${value}" target="_blank">Open in Google Maps</a></td></tr>`;
+                    } else {
+                        html += `<tr><td>${displayKey}:</td><td>${value}</td></tr>`;
+                    }
                 }
             });
             
@@ -403,7 +458,46 @@
                                 return L.circleMarker(latlng, config.pointStyle);
                             },
                             onEachFeature: (feature, layer) => {
+                                // Add popup
                                 layer.bindPopup(createPopupContent(feature));
+                                
+                                // Add labels based on layer type
+                                const props = feature.properties;
+                                let labelText = '';
+                                
+                                // Choose appropriate label text
+                                if (props.note) {
+                                    // For culverts - use first part of note before dash
+                                    labelText = props.note.split('-')[0].trim();
+                                    if (labelText.length > 30) {
+                                        labelText = labelText.substring(0, 27) + '...';
+                                    }
+                                } else if (props.name) {
+                                    labelText = props.name;
+                                } else if (props.location) {
+                                    labelText = props.location;
+                                }
+                                
+                                if (labelText) {
+                                    // Permanent labels for Points of Interest only
+                                    if (config.name === 'Points of Interest') {
+                                        layer.bindTooltip(labelText, {
+                                            permanent: true,
+                                            direction: 'right',
+                                            className: 'feature-label',
+                                            offset: [8, 0]
+                                        });
+                                    } 
+                                    // Hover labels for Culverts and Sampling Stations
+                                    else if (['Culverts', 'Sampling Stations'].includes(config.name)) {
+                                        layer.bindTooltip(labelText, {
+                                            permanent: false,
+                                            direction: 'top',
+                                            className: 'feature-label-hover',
+                                            offset: [0, -10]
+                                        });
+                                    }
+                                }
                             }
                         });
                     } else {
@@ -412,6 +506,47 @@
                             style: config.style,
                             onEachFeature: (feature, layer) => {
                                 layer.bindPopup(createPopupContent(feature));
+                                
+                                // Add labels for parcels
+                                if (config.name === 'Property Parcels') {
+                                    const props = feature.properties;
+                                    const labelText = props.lot || props.parcel_id || '';
+                                    
+                                    if (labelText) {
+                                        layer.bindTooltip(labelText, {
+                                            permanent: true,
+                                            direction: 'center',
+                                            className: 'parcel-label',
+                                            offset: [0, 0]
+                                        });
+                                    }
+                                }
+                                // Add hover labels for roads
+                                else if (config.name === 'Roads (BLM ROW)') {
+                                    const props = feature.properties;
+                                    const labelText = props.fullname || props.name || '';
+                                    
+                                    if (labelText) {
+                                        layer.bindTooltip(labelText, {
+                                            permanent: false,
+                                            direction: 'center',
+                                            className: 'feature-label-hover'
+                                        });
+                                    }
+                                }
+                                // Add hover labels for water mains and irrigation
+                                else if (['Water Mains', 'Irrigation Lines', 'Upper Cabins System'].includes(config.name)) {
+                                    const props = feature.properties;
+                                    const labelText = props.name || '';
+                                    
+                                    if (labelText) {
+                                        layer.bindTooltip(labelText, {
+                                            permanent: false,
+                                            direction: 'center',
+                                            className: 'feature-label-hover'
+                                        });
+                                    }
+                                }
                             }
                         });
                     }
