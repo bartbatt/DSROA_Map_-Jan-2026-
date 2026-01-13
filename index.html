@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deer Springs Ranch - Property Map</title>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        
+        .map-title {
+            position: absolute;
+            top: 10px;
+            left: 60px;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            right: 10px;
+            background: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 250px;
+            font-size: 13px;
+        }
+        
+        .legend h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .legend-item {
+            margin: 5px 0;
+            display: flex;
+            align-items: center;
+        }
+        
+        .legend-symbol {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 3px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+        
+        .legend-point {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            margin-left: 4px;
+            flex-shrink: 0;
+            border: 2px solid white;
+            box-shadow: 0 0 3px rgba(0,0,0,0.5);
+        }
+        
+        .leaflet-popup-content {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .leaflet-popup-content h3 {
+            margin: 0 0 8px 0;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .leaflet-popup-content table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leaflet-popup-content td {
+            padding: 3px 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .leaflet-popup-content td:first-child {
+            font-weight: 600;
+            color: #666;
+            padding-right: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .map-title {
+                font-size: 14px;
+                padding: 8px 12px;
+                left: 50px;
+            }
+            
+            .legend {
+                font-size: 11px;
+                padding: 10px;
+                max-width: 200px;
+                bottom: 20px;
+            }
+            
+            .legend h4 {
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="map-title">Deer Springs Ranch Property Map</div>
+    <div id="map"></div>
+    <div class="legend">
+        <h4>Map Layers</h4>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(200,50,50,0.3); border: 2px solid #C83232;"></div>
+            <span>Property Parcels</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background-color: #0066CC;"></div>
+            <span>Water Mains</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background-color: #00AA00;"></div>
+            <span>Irrigation Lines</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-line" style="background-color: #8B4513;"></div>
+            <span>Roads (BLM ROW)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-point" style="background-color: #FF6B35;"></div>
+            <span>Culverts</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-point" style="background-color: #4ECDC4;"></div>
+            <span>Points of Interest</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-point" style="background-color: #9B59B6;"></div>
+            <span>Sampling Stations</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(0,150,255,0.3); border: 2px solid #0096FF;"></div>
+            <span>Irrigation Features</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-symbol" style="background-color: rgba(139,195,74,0.3); border: 2px solid #8BC34A;"></div>
+            <span>Grazing Allotments</span>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // Initialize the map
+        const map = L.map('map', {
+            center: [37.376983, -112.256541],
+            zoom: 14,
+            zoomControl: true
+        });
+        
+        // Add base map layers
+        const topoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://opentopomap.org">OpenTopoMap</a>',
+            maxZoom: 17
+        });
+        
+        const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri',
+            maxZoom: 18
+        });
+        
+        const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        });
+        
+        // Add default base layer
+        satellite.addTo(map);
+        
+        // Layer groups for organization
+        const overlays = {};
+        
+        // Helper function to create popup content
+        function createPopupContent(feature) {
+            let html = '<div>';
+            
+            // Get feature properties
+            const props = feature.properties;
+            
+            // Create a clean display name
+            const importantKeys = ['name', 'title', 'location', 'type', 'fullname', 'lot'];
+            let title = '';
+            
+            for (const key of importantKeys) {
+                if (props[key]) {
+                    title = props[key];
+                    break;
+                }
+            }
+            
+            if (title) {
+                html += `<h3>${title}</h3>`;
+            }
+            
+            html += '<table>';
+            
+            // Show relevant properties
+            const skipKeys = ['qc_id', 'geometry', 'id', 'fid', 'globalid', 'GlobalID', 'OBJECTID'];
+            
+            Object.keys(props).forEach(key => {
+                if (!skipKeys.includes(key) && props[key] !== null && props[key] !== '') {
+                    const value = props[key];
+                    // Format key name
+                    const displayKey = key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    html += `<tr><td>${displayKey}:</td><td>${value}</td></tr>`;
+                }
+            });
+            
+            html += '</table></div>';
+            return html;
+        }
+        
+        // Load and style each layer
+        const layerConfigs = [
+            {
+                file: 'dsr.geojson',
+                name: 'Property Parcels',
+                style: {
+                    fillColor: '#C83232',
+                    fillOpacity: 0.2,
+                    color: '#C83232',
+                    weight: 2
+                },
+                group: 'parcels'
+            },
+            {
+                file: 'water_mains_(general_alignment).geojson',
+                name: 'Water Mains',
+                style: {
+                    color: '#0066CC',
+                    weight: 3,
+                    opacity: 0.8
+                },
+                group: 'water'
+            },
+            {
+                file: 'irrigation_system_linear_features.geojson',
+                name: 'Irrigation Lines',
+                style: {
+                    color: '#00AA00',
+                    weight: 3,
+                    opacity: 0.7
+                },
+                group: 'irrigation'
+            },
+            {
+                file: 'upper_cabins_system.geojson',
+                name: 'Upper Cabins System',
+                style: {
+                    color: '#0088CC',
+                    weight: 3,
+                    opacity: 0.7,
+                    dashArray: '5, 5'
+                },
+                group: 'water'
+            },
+            {
+                file: 'dsr_blm_title_5_rows.geojson',
+                name: 'Roads (BLM ROW)',
+                style: {
+                    color: '#8B4513',
+                    weight: 2,
+                    opacity: 0.7
+                },
+                group: 'infrastructure'
+            },
+            {
+                file: 'irrigation_system_features.geojson',
+                name: 'Irrigation Features',
+                style: {
+                    fillColor: '#0096FF',
+                    fillOpacity: 0.3,
+                    color: '#0096FF',
+                    weight: 2
+                },
+                group: 'irrigation'
+            },
+            {
+                file: 'DSR_Grazing_Allotments.geojson',
+                name: 'Grazing Allotments',
+                style: {
+                    fillColor: '#8BC34A',
+                    fillOpacity: 0.2,
+                    color: '#8BC34A',
+                    weight: 2,
+                    dashArray: '5, 5'
+                },
+                group: 'land_use'
+            },
+            {
+                file: 'culverts_(aug_2025).geojson',
+                name: 'Culverts',
+                pointStyle: {
+                    radius: 6,
+                    fillColor: '#FF6B35',
+                    color: '#FFF',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                },
+                group: 'infrastructure'
+            },
+            {
+                file: 'points_of_interest.geojson',
+                name: 'Points of Interest',
+                pointStyle: {
+                    radius: 7,
+                    fillColor: '#4ECDC4',
+                    color: '#FFF',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                },
+                group: 'poi'
+            },
+            {
+                file: 'sampling_stations.geojson',
+                name: 'Sampling Stations',
+                pointStyle: {
+                    radius: 7,
+                    fillColor: '#9B59B6',
+                    color: '#FFF',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
+                },
+                group: 'water'
+            },
+            {
+                file: 'features.geojson',
+                name: 'Other Features',
+                pointStyle: {
+                    radius: 6,
+                    fillColor: '#E74C3C',
+                    color: '#FFF',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.8
+                },
+                group: 'poi'
+            }
+        ];
+        
+        // Load all layers
+        let loadedCount = 0;
+        const totalLayers = layerConfigs.length;
+        
+        layerConfigs.forEach(config => {
+            fetch(config.file)
+                .then(response => response.json())
+                .then(data => {
+                    let layer;
+                    
+                    if (config.pointStyle) {
+                        // Point layer
+                        layer = L.geoJSON(data, {
+                            pointToLayer: (feature, latlng) => {
+                                return L.circleMarker(latlng, config.pointStyle);
+                            },
+                            onEachFeature: (feature, layer) => {
+                                layer.bindPopup(createPopupContent(feature));
+                            }
+                        });
+                    } else {
+                        // Line or polygon layer
+                        layer = L.geoJSON(data, {
+                            style: config.style,
+                            onEachFeature: (feature, layer) => {
+                                layer.bindPopup(createPopupContent(feature));
+                            }
+                        });
+                    }
+                    
+                    // Add to appropriate overlay group
+                    overlays[config.name] = layer;
+                    
+                    // Add certain layers by default
+                    if (['Property Parcels', 'Water Mains', 'Roads (BLM ROW)', 
+                         'Points of Interest', 'Culverts'].includes(config.name)) {
+                        layer.addTo(map);
+                    }
+                    
+                    loadedCount++;
+                    
+                    // Add layer control when all layers are loaded
+                    if (loadedCount === totalLayers) {
+                        const baseLayers = {
+                            "Satellite": satellite,
+                            "Topographic": topoMap,
+                            "Streets": streets
+                        };
+                        
+                        L.control.layers(baseLayers, overlays, {
+                            collapsed: false,
+                            position: 'topright'
+                        }).addTo(map);
+                    }
+                })
+                .catch(error => {
+                    console.error(`Error loading ${config.name}:`, error);
+                    loadedCount++;
+                });
+        });
+        
+        // Add scale control
+        L.control.scale({
+            imperial: true,
+            metric: true,
+            position: 'bottomleft'
+        }).addTo(map);
+        
+    </script>
+</body>
+</html>

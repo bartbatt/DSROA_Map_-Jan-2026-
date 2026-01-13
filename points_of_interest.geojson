@@ -1,0 +1,32 @@
+{
+"type": "FeatureCollection",
+"name": "points_of_interest",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "qc_id": 0, "name": "Ranch HQ" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.221926589224694, 37.33116634026149, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 1, "name": "Cabin 9" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.223666280036298, 37.331482647681767, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 2, "name": "Trout Pond" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.26479581464875, 37.400015765194226, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 3, "name": "Cabin 1" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.27178768328389, 37.403260622683476, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 4, "name": "Garden Cottage" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.221884414901993, 37.330834217470169, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 5, "name": "Ranch Store" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222095286515525, 37.330886935373556, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 6, "name": "Cabin 8" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222838608953197, 37.331772596150373, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 7, "name": "Cabin 7" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222696270614065, 37.332299775184183, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 8, "name": "Cabin 6" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222675183452708, 37.332742605572598, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 9, "name": "Cabin 10" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.224325253828582, 37.332589723652788, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 10, "name": "RV Pad" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222393694596732, 37.334254298500866, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 11, "name": "RV Pad" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222359146081402, 37.33458826748236, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 12, "name": "RV Pad" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222301565222523, 37.334864655604989, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 13, "name": "Cabin 2" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.271402079040072, 37.403679278719636, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 14, "name": "Cabin 3" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.270766750143068, 37.4035984854495, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 15, "name": "Cabin 4" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.269859662064718, 37.402368224290598, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 16, "name": "Trout Pond" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.263561881068469, 37.398664314130123, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 17, "name": "Trout Pond" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.262930224592864, 37.397239414638605, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 18, "name": "Lot 144 Connection" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227398776829887, 37.350223651840871, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 19, "name": "Lot 146 Connection" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227393032404223, 37.349629103785823, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 20, "name": "Lot 147 Connection" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227393032404223, 37.347589832679127, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 21, "name": "Lot 143 Connection" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227056019637786, 37.350399134628326, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 22, "name": "40k Water Tank" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227136545433183, 37.350565114399778, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 23, "name": "Lower System Well" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.220058764948249, 37.335303509165634, 0.0 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 24, "name": "Upper Cabin's Spring" }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.266158211011771, 37.399975240554696, 0.0 ] ] } }
+]
+}

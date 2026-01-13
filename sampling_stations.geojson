@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "sampling_stations",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "qc_id": 0, "id": null, "location": "40k Tank", "type": "Kupferle Eclipse #24", "instaldate": null, "station#": 1 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.227168909549334, 37.350502115946988 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 1, "id": null, "location": "PRV Vault", "type": null, "instaldate": null, "station#": 2 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222782408238416, 37.336222458022306 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 2, "id": null, "location": "Near Electric Building Frost Free", "type": null, "instaldate": null, "station#": 3 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.223267890802376, 37.332766338008803 ] ] } },
+{ "type": "Feature", "properties": { "qc_id": 3, "id": null, "location": "Ranch HQ", "type": null, "instaldate": null, "station#": 4 }, "geometry": { "type": "MultiPoint", "coordinates": [ [ -112.222737034914914, 37.330801065456903 ] ] } }
+]
+}
