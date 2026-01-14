@@ -44,3 +44,4 @@ All overlay layers can be toggled on/off using the layer control in the top-righ
 GIS data compiled and created by Bartholomew Battista, PE for Deer Springs Ranch Owner Association.
 
 Last Updated: January 2026
+"Updated: January 13, 2026"
