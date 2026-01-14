@@ -478,6 +478,12 @@
         // ========================================
         
         // Kane County Parcels from AGRC
+        // Bounding box: 1 mile around DSR Ranch
+        const dsrBounds = L.latLngBounds(
+            L.latLng(37.311626, -112.329617),  // Southwest corner
+            L.latLng(37.442288, -112.183515)   // Northeast corner
+        );
+        
         const kaneCountyParcels = L.esri.featureLayer({
             url: 'https://gis.utahcounty.gov/arcgis/rest/services/Parcels/MapServer/0',
             where: "COUNTY = 'Kane'",
@@ -493,6 +499,15 @@
             return `<b>Kane County Parcel</b><br>Parcel ID: ${layer.feature.properties.PARCEL_ID || layer.feature.properties.parcel_id || 'N/A'}`;
         });
         
+        // Filter to bounding box on load
+        kaneCountyParcels.on('load', function() {
+            kaneCountyParcels.eachFeature(function(layer) {
+                if (!dsrBounds.contains(layer.getLatLng ? layer.getLatLng() : layer.getBounds().getCenter())) {
+                    kaneCountyParcels.removeLayer(layer);
+                }
+            });
+        });
+        
         // Utah Roads from AGRC
         const utahRoads = L.esri.featureLayer({
             url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Utah_Roads/FeatureServer/0',
@@ -506,6 +521,15 @@
         }).bindPopup(function(layer) {
             const props = layer.feature.properties;
             return `<b>${props.FULLNAME || props.NAME || 'Unnamed Road'}</b><br>Type: ${props.CARTOCODE || props.CLASS || 'N/A'}`;
+        });
+        
+        // Filter to bounding box on load
+        utahRoads.on('load', function() {
+            utahRoads.eachFeature(function(layer) {
+                if (!dsrBounds.intersects(layer.getBounds())) {
+                    utahRoads.removeLayer(layer);
+                }
+            });
         });
         
         // Water Points of Diversion from Utah Division of Water Rights
@@ -529,6 +553,15 @@
                     Number: ${props.WRNUM || props.WR_NUM || 'N/A'}<br>
                     Type: ${props.WRSOURCE || props.SOURCE || 'N/A'}<br>
                     Status: ${props.WRSTATUS || props.STATUS || 'N/A'}`;
+        });
+        
+        // Filter to bounding box on load
+        waterDiversions.on('load', function() {
+            waterDiversions.eachFeature(function(layer) {
+                if (!dsrBounds.contains(layer.getLatLng())) {
+                    waterDiversions.removeLayer(layer);
+                }
+            });
         });
         
         // Add AGRC layers to overlays control (not added to map by default)
@@ -588,7 +621,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=4',
+                file: 'dsr.geojson?v=5',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
