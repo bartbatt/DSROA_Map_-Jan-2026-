@@ -45,3 +45,4 @@ GIS data compiled and created by Bartholomew Battista, PE for Deer Springs Ranch
 
 Last Updated: January 2026
 "Updated: January 13, 2026"
+ Last updated: January 13, 2026 - Map updated with parcel 97-1
