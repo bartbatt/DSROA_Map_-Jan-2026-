@@ -588,7 +588,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=3',
+                file: 'dsr.geojson?v=4',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -785,7 +785,13 @@
                                 // Add labels for parcels
                                 if (config.name === 'Property Parcels') {
                                     const props = feature.properties;
-                                    const labelText = props.lot || props.parcel_id || '';
+                                    const parcelId = props.parcel_id || '';
+                                    const lot = props.lot || '';
+                                    
+                                    // Use parcel_id for non-standard formats (those with more than one dash or special formats)
+                                    // Standard formats are: ##-#, ##-##, ###-##, ###-###
+                                    const standardFormat = /^\d{2,3}-\d{1,3}$/;
+                                    const labelText = standardFormat.test(parcelId) ? lot : parcelId;
                                     
                                     if (labelText) {
                                         layer.bindTooltip(labelText, {
