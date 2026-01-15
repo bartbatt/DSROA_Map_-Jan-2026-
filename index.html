@@ -412,6 +412,7 @@
             <span>Grazing Allotments</span>
         </div>
         <hr style="margin: 8px 0; border: none; border-top: 1px solid #ddd;">
+        <!-- AGRC External Data - DISABLED (causing performance issues)
         <div style="font-weight: 600; margin: 8px 0 4px 0; font-size: 12px; color: #666;">AGRC External Data</div>
         <div class="legend-item">
             <div class="legend-symbol" style="background-color: transparent; border: 1px solid #888;"></div>
@@ -425,6 +426,7 @@
             <div class="legend-point" style="background-color: #0099FF; border-color: #003366;"></div>
             <span>Water Diversions</span>
         </div>
+        -->
         </div> <!-- Close legend-content -->
     </div> <!-- Close legend -->
 
@@ -474,9 +476,12 @@
         const overlays = {};
         
         // ========================================
-        // AGRC External Layers (loaded first, appear underneath local data)
+        // AGRC External Layers - DISABLED (causing performance issues)
         // ========================================
+        // These layers are too large and slow to load. They can be re-enabled later
+        // with proper server-side spatial filtering if needed.
         
+        /*
         // Kane County Parcels from AGRC
         // Bounding box: 1 mile around DSR Ranch
         const dsrBounds = L.latLngBounds(
@@ -563,11 +568,13 @@
                 }
             });
         });
+        */
         
         // Add AGRC layers to overlays control (not added to map by default)
-        overlays['Kane County Parcels (AGRC)'] = kaneCountyParcels;
-        overlays['Utah Roads (AGRC)'] = utahRoads;
-        overlays['Water Points of Diversion (AGRC)'] = waterDiversions;
+        // DISABLED - causing performance issues
+        // overlays['Kane County Parcels (AGRC)'] = kaneCountyParcels;
+        // overlays['Utah Roads (AGRC)'] = utahRoads;
+        // overlays['Water Points of Diversion (AGRC)'] = waterDiversions;
         
         // ========================================
         // Helper function to create popup content
@@ -621,7 +628,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=5',
+                file: 'dsr.geojson?v=6',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
