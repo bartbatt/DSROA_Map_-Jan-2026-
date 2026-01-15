@@ -476,107 +476,6 @@
         const overlays = {};
         
         // ========================================
-        // AGRC External Layers - DISABLED (causing performance issues)
-        // ========================================
-        // These layers are too large and slow to load. They can be re-enabled later
-        // with proper server-side spatial filtering if needed.
-        
-        /*
-        // Kane County Parcels from AGRC
-        // Bounding box: 1 mile around DSR Ranch
-        const dsrBounds = L.latLngBounds(
-            L.latLng(37.311626, -112.329617),  // Southwest corner
-            L.latLng(37.442288, -112.183515)   // Northeast corner
-        );
-        
-        const kaneCountyParcels = L.esri.featureLayer({
-            url: 'https://gis.utahcounty.gov/arcgis/rest/services/Parcels/MapServer/0',
-            where: "COUNTY = 'Kane'",
-            style: {
-                color: '#888888',
-                weight: 1,
-                fillOpacity: 0,
-                opacity: 0.5
-            },
-            pane: 'overlayPane',
-            minZoom: 13
-        }).bindPopup(function(layer) {
-            return `<b>Kane County Parcel</b><br>Parcel ID: ${layer.feature.properties.PARCEL_ID || layer.feature.properties.parcel_id || 'N/A'}`;
-        });
-        
-        // Filter to bounding box on load
-        kaneCountyParcels.on('load', function() {
-            kaneCountyParcels.eachFeature(function(layer) {
-                if (!dsrBounds.contains(layer.getLatLng ? layer.getLatLng() : layer.getBounds().getCenter())) {
-                    kaneCountyParcels.removeLayer(layer);
-                }
-            });
-        });
-        
-        // Utah Roads from AGRC
-        const utahRoads = L.esri.featureLayer({
-            url: 'https://services1.arcgis.com/99lidPhWCzftIe9K/arcgis/rest/services/Utah_Roads/FeatureServer/0',
-            where: "COUNTY_L = 'KANE' OR COUNTY_R = 'KANE'",
-            style: {
-                color: '#666666',
-                weight: 2,
-                opacity: 0.6
-            },
-            pane: 'overlayPane'
-        }).bindPopup(function(layer) {
-            const props = layer.feature.properties;
-            return `<b>${props.FULLNAME || props.NAME || 'Unnamed Road'}</b><br>Type: ${props.CARTOCODE || props.CLASS || 'N/A'}`;
-        });
-        
-        // Filter to bounding box on load
-        utahRoads.on('load', function() {
-            utahRoads.eachFeature(function(layer) {
-                if (!dsrBounds.intersects(layer.getBounds())) {
-                    utahRoads.removeLayer(layer);
-                }
-            });
-        });
-        
-        // Water Points of Diversion from Utah Division of Water Rights
-        const waterDiversions = L.esri.featureLayer({
-            url: 'https://services.arcgis.com/ZzrwjTRez6FJiOq4/arcgis/rest/services/WaterRights/FeatureServer/0',
-            pointToLayer: function(feature, latlng) {
-                return L.circleMarker(latlng, {
-                    radius: 5,
-                    fillColor: '#0099FF',
-                    color: '#003366',
-                    weight: 1,
-                    opacity: 0.8,
-                    fillOpacity: 0.6
-                });
-            },
-            pane: 'overlayPane',
-            minZoom: 12
-        }).bindPopup(function(layer) {
-            const props = layer.feature.properties;
-            return `<b>Water Right</b><br>
-                    Number: ${props.WRNUM || props.WR_NUM || 'N/A'}<br>
-                    Type: ${props.WRSOURCE || props.SOURCE || 'N/A'}<br>
-                    Status: ${props.WRSTATUS || props.STATUS || 'N/A'}`;
-        });
-        
-        // Filter to bounding box on load
-        waterDiversions.on('load', function() {
-            waterDiversions.eachFeature(function(layer) {
-                if (!dsrBounds.contains(layer.getLatLng())) {
-                    waterDiversions.removeLayer(layer);
-                }
-            });
-        });
-        */
-        
-        // Add AGRC layers to overlays control (not added to map by default)
-        // DISABLED - causing performance issues
-        // overlays['Kane County Parcels (AGRC)'] = kaneCountyParcels;
-        // overlays['Utah Roads (AGRC)'] = utahRoads;
-        // overlays['Water Points of Diversion (AGRC)'] = waterDiversions;
-        
-        // ========================================
         // Helper function to create popup content
         // ========================================
         function createPopupContent(feature) {
@@ -628,7 +527,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=6',
+                file: 'dsr.geojson?v=7',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -809,7 +708,16 @@
                                             permanent: false,
                                             direction: 'top',
                                             className: 'feature-label-hover',
-                                            offset: [0, -10]
+                                            offset: [0, -10],
+                                            sticky: true
+                                        });
+                                        
+                                        // Ensure hover events work
+                                        layer.on('mouseover', function() {
+                                            this.openTooltip();
+                                        });
+                                        layer.on('mouseout', function() {
+                                            this.closeTooltip();
                                         });
                                     }
                                 }
