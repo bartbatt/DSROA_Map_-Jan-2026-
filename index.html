@@ -514,6 +514,8 @@
                     // Make URLs clickable
                     if (key === 'url' && value.startsWith('http')) {
                         html += `<tr><td>${displayKey}:</td><td><a href="${value}" target="_blank">Open in Google Maps</a></td></tr>`;
+                    } else if (key === 'county_url' && value.startsWith('http')) {
+                        html += `<tr><td>Property Records:</td><td><a href="${value}" target="_blank">View on Kane County Site</a></td></tr>`;
                     } else {
                         html += `<tr><td>${displayKey}:</td><td>${value}</td></tr>`;
                     }
@@ -527,7 +529,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=7',
+                file: 'dsr.geojson?v=8',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
