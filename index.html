@@ -533,7 +533,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=10',
+                file: 'dsr.geojson?v=12',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -682,10 +682,15 @@
                     let layer;
                     
                     if (config.pointStyle) {
-                        // Point layer
+                        // Point layer - use markerPane to ensure points appear above polygons
                         layer = L.geoJSON(data, {
                             pointToLayer: (feature, latlng) => {
-                                return L.circleMarker(latlng, config.pointStyle);
+                                const marker = L.circleMarker(latlng, {
+                                    ...config.pointStyle,
+                                    pane: 'markerPane', // Ensure points are above polygons
+                                    interactive: true // Make sure markers capture events
+                                });
+                                return marker;
                             },
                             onEachFeature: (feature, layer) => {
                                 // Add popup
