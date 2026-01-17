@@ -392,6 +392,10 @@
             <span>Roads (BLM ROW)</span>
         </div>
         <div class="legend-item">
+            <div class="legend-line" style="background-color: #666666; opacity: 0.6;"></div>
+            <span>Utah Roads</span>
+        </div>
+        <div class="legend-item">
             <div class="legend-point" style="background-color: #FF6B35;"></div>
             <span>Culverts</span>
         </div>
@@ -529,7 +533,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=9',
+                file: 'dsr.geojson?v=10',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -577,6 +581,16 @@
                     color: '#8B4513',
                     weight: 2,
                     opacity: 0.7
+                },
+                group: 'infrastructure'
+            },
+            {
+                file: 'roads_utah.geojson',
+                name: 'Utah Roads',
+                style: {
+                    color: '#666666',
+                    weight: 2,
+                    opacity: 0.6
                 },
                 group: 'infrastructure'
             },
@@ -753,7 +767,7 @@
                                     }
                                 }
                                 // Add hover labels for roads
-                                else if (config.name === 'Roads (BLM ROW)') {
+                                else if (['Roads (BLM ROW)', 'Utah Roads'].includes(config.name)) {
                                     const props = feature.properties;
                                     const labelText = props.fullname || props.name || '';
                                     
