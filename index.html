@@ -458,7 +458,8 @@
         const map = L.map('map', {
             center: [37.376983, -112.256541],
             zoom: 14,
-            zoomControl: true
+            zoomControl: true,
+            maxZoom: 20  // Allow zooming in closer
         });
         
         // Add base map layers
@@ -467,9 +468,15 @@
             maxZoom: 17
         });
         
-        const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: '&copy; Esri',
-            maxZoom: 18
+        const satellite = L.tileLayer('https://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics',
+            maxZoom: 20  // High resolution imagery
+        });
+        
+        // USDA NAIP High-Resolution Imagery (US only, very detailed)
+        const naipImagery = L.tileLayer('https://gis.apfo.usda.gov/arcgis/rest/services/NAIP/USDA_CONUS_PRIME/ImageServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; USDA NAIP',
+            maxZoom: 20
         });
         
         const streets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -537,7 +544,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=15',
+                file: 'dsr.geojson?v=17',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -832,7 +839,8 @@
                     // Add layer control when all layers are loaded
                     if (loadedCount === totalLayers) {
                         const baseLayers = {
-                            "Satellite": satellite,
+                            "Satellite (Esri)": satellite,
+                            "High-Res Aerial (NAIP)": naipImagery,
                             "Topographic": topoMap,
                             "Streets": streets
                         };
