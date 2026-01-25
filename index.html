@@ -384,6 +384,10 @@
             <span>Lower Cabins Water System</span>
         </div>
         <div class="legend-item">
+            <div class="legend-point" style="background-color: #0066CC;"></div>
+            <span>Lower Cabins Water Valves</span>
+        </div>
+        <div class="legend-item">
             <div class="legend-line" style="background-color: #00AA00;"></div>
             <span>Irrigation Lines</span>
         </div>
@@ -533,7 +537,7 @@
         // Load and style each layer
         const layerConfigs = [
             {
-                file: 'dsr.geojson?v=12',
+                file: 'dsr.geojson?v=15',
                 name: 'Property Parcels',
                 style: {
                     fillColor: '#C83232',
@@ -544,12 +548,25 @@
                 group: 'parcels'
             },
             {
-                file: 'water_mains_(general_alignment).geojson',
+                file: 'lower_cabins_water_system.geojson',
                 name: 'Lower Cabins Water System',
                 style: {
                     color: '#0066CC',
                     weight: 3,
                     opacity: 0.8
+                },
+                group: 'water'
+            },
+            {
+                file: 'lower_cabins_water_valves.geojson',
+                name: 'Lower Cabins Water Valves',
+                pointStyle: {
+                    radius: 5,
+                    fillColor: '#0066CC',
+                    color: '#FFF',
+                    weight: 2,
+                    opacity: 1,
+                    fillOpacity: 0.9
                 },
                 group: 'water'
             },
@@ -723,8 +740,8 @@
                                             offset: [8, 0]
                                         });
                                     } 
-                                    // Hover labels for Culverts and Sampling Stations
-                                    else if (['Culverts', 'Sampling Stations'].includes(config.name)) {
+                                    // Hover labels for Culverts, Sampling Stations, and Water Valves
+                                    else if (['Culverts', 'Sampling Stations', 'Lower Cabins Water Valves'].includes(config.name)) {
                                         layer.bindTooltip(labelText, {
                                             permanent: false,
                                             direction: 'top',
@@ -805,8 +822,8 @@
                     overlays[config.name] = layer;
                     
                     // Add certain layers by default
-                    if (['Property Parcels', 'Lower Cabins Water System', 'Roads (BLM ROW)', 
-                         'Points of Interest', 'Culverts'].includes(config.name)) {
+                    if (['Property Parcels', 'Lower Cabins Water System', 
+                         'Roads (BLM ROW)', 'Points of Interest', 'Culverts'].includes(config.name)) {
                         layer.addTo(map);
                     }
                     
